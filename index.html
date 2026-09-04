@@ -8,131 +8,260 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
+  <meta name="theme-color" content="#ec0a78">
+
   <title>Sorpréndeme</title>
 
   <style>
-    * {
+
+    :root{
+      --rosa: #ec0a78;
+      --rosa-fuerte: #d90068;
+      --rosa-claro: #ff4fa3;
+      --blanco: #ffffff;
+      --negro: #000000;
+    }
+
+    *{
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html,
-    body {
+    body{
       margin: 0;
-      width: 100%;
-      min-height: 100%;
-      background: #000;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+      padding: 0;
 
-    body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    .app {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    video {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      background: #000;
+
+      background: var(--rosa);
+
+      overflow: hidden;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
     }
 
-    .controls {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 25px;
+    body{
+      position: fixed;
+      inset: 0;
+    }
+
+    .app{
+      position: relative;
+
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+
+      overflow: hidden;
+
+      background: var(--rosa);
 
       display: flex;
       justify-content: center;
-      gap: 10px;
-
-      padding: 0 20px;
-      z-index: 10;
+      align-items: center;
     }
 
-    button {
+    video{
+      position: absolute;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      background: var(--rosa);
+
       border: none;
-      border-radius: 999px;
-      padding: 15px 22px;
-
-      font-size: 14px;
-      font-weight: 800;
-
-      cursor: pointer;
-
-      background: #ffd400;
-      color: #111;
-
-      box-shadow: 0 6px 20px rgba(0,0,0,.35);
+      outline: none;
     }
 
-    button:active {
-      transform: scale(.97);
-    }
-
-    #playButton {
+    .overlay{
       position: absolute;
 
-      top: 50%;
-      left: 50%;
+      inset: 0;
 
-      transform: translate(-50%, -50%);
+      pointer-events: none;
 
-      padding: 18px 28px;
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.02) 0%,
+          rgba(0,0,0,0.00) 55%,
+          rgba(0,0,0,0.45) 100%
+        );
 
-      font-size: 16px;
-
-      z-index: 20;
-
-      display: none;
+      z-index: 2;
     }
 
-    .loading {
+    .bottom{
       position: absolute;
 
-      top: 50%;
-      left: 50%;
+      left: 0;
+      right: 0;
 
-      transform: translate(-50%, -50%);
+      bottom:
+        max(
+          22px,
+          env(safe-area-inset-bottom)
+        );
 
-      color: white;
+      padding:
+        0 20px
+        calc(4px + env(safe-area-inset-bottom));
 
-      font-size: 15px;
+      display: flex;
+      justify-content: center;
 
       z-index: 5;
     }
 
-    .error {
+    #changeButton{
+      width: min(92%, 430px);
+
+      border: 2px solid rgba(255,255,255,0.85);
+
+      border-radius: 999px;
+
+      padding: 17px 24px;
+
+      background: var(--rosa);
+
+      color: var(--blanco);
+
+      font-size: 16px;
+
+      font-weight: 900;
+
+      letter-spacing: .6px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.30);
+
+      transition:
+        transform .15s ease,
+        background .15s ease;
+    }
+
+    #changeButton:active{
+      transform: scale(.96);
+
+      background: var(--rosa-fuerte);
+    }
+
+    .loading{
       position: absolute;
 
-      left: 20px;
-      right: 20px;
-      top: 50%;
+      inset: 0;
 
-      transform: translateY(-50%);
+      z-index: 20;
+
+      background: var(--rosa);
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+      align-items: center;
+
+      gap: 18px;
 
       color: white;
-      text-align: center;
+
+      transition: opacity .35s ease;
+    }
+
+    .loading.hide{
+      opacity: 0;
+
+      pointer-events: none;
+    }
+
+    .logoText{
+      font-size: 34px;
+
+      font-weight: 900;
+
+      letter-spacing: 1px;
+
+      font-style: italic;
+
+      color: white;
+
+      text-shadow:
+        0 4px 12px rgba(0,0,0,.18);
+    }
+
+    .line{
+      width: 190px;
+
+      height: 7px;
+
+      border-radius: 999px;
+
+      background: #ffd400;
+
+      transform: rotate(-3deg);
+
+      margin-top: -8px;
+    }
+
+    .spinner{
+      width: 36px;
+      height: 36px;
+
+      border-radius: 50%;
+
+      border:
+        4px solid
+        rgba(255,255,255,.30);
+
+      border-top-color: white;
+
+      animation:
+        girar .8s linear infinite;
+    }
+
+    @keyframes girar{
+      to{
+        transform: rotate(360deg);
+      }
+    }
+
+    .error{
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 30;
+
+      padding: 30px;
 
       display: none;
 
-      z-index: 30;
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+
+      color: white;
+
+      background: var(--rosa);
+
+      font-weight: 700;
+
+      font-size: 17px;
     }
+
   </style>
 </head>
 
@@ -140,30 +269,37 @@
 
   <div class="app">
 
-    <div id="loading" class="loading">
-      Cargando video...
-    </div>
-
     <video
       id="video"
-      controls
+      autoplay
+      muted
       playsinline
       webkit-playsinline
       preload="auto"
     ></video>
 
-    <button id="playButton">
-      ▶ VER VIDEO
-    </button>
+    <div class="overlay"></div>
 
-    <div class="controls">
+    <div class="bottom">
       <button id="changeButton">
         SORPRÉNDEME OTRA VEZ
       </button>
     </div>
 
+    <div id="loading" class="loading">
+
+      <div class="logoText">
+        SORPRÉNDEME
+      </div>
+
+      <div class="line"></div>
+
+      <div class="spinner"></div>
+
+    </div>
+
     <div id="error" class="error">
-      No se pudo reproducir el video.
+      No se pudo cargar el video.
     </div>
 
   </div>
@@ -173,15 +309,11 @@
 
     const videos = [
 
-      "IMG_6293.MP4"
+      "IMG_6293.MP4",
 
-      /*
-      Cuando tengas los otros videos:
+      "WhatsApp Video 2026-09-04 at 12.48.37.mp4",
 
-      "video2.mp4",
-      "video3.mp4"
-
-      */
+      "WhatsApp Video 2026-09-04 at 12.48.57.mp4"
 
     ];
 
@@ -192,9 +324,6 @@
     const changeButton =
       document.getElementById("changeButton");
 
-    const playButton =
-      document.getElementById("playButton");
-
     const loading =
       document.getElementById("loading");
 
@@ -204,125 +333,108 @@
 
     let currentIndex = -1;
 
+    let userInteracted = false;
 
-    function randomVideo() {
 
-      if (videos.length === 1) {
+    function getRandomIndex(){
+
+      if(videos.length <= 1){
         return 0;
       }
 
       let newIndex;
 
-      do {
+      do{
 
         newIndex =
           Math.floor(
             Math.random() * videos.length
           );
 
-      } while (newIndex === currentIndex);
+      }while(newIndex === currentIndex);
 
       return newIndex;
     }
 
 
-    async function loadVideo() {
+    async function playSelectedVideo(){
 
-      loading.style.display = "block";
+      loading.classList.remove("hide");
+
       error.style.display = "none";
-      playButton.style.display = "none";
 
-      currentIndex = randomVideo();
+      currentIndex =
+        getRandomIndex();
 
-      const selectedVideo =
+      const selected =
         videos[currentIndex];
 
       video.pause();
 
       video.src =
-        "./" + selectedVideo;
+        encodeURI(selected);
 
       video.load();
 
 
-      try {
+      try{
+
+        if(userInteracted){
+
+          video.muted = false;
+
+        }else{
+
+          video.muted = true;
+
+        }
 
         await video.play();
 
-        loading.style.display = "none";
-
-      }
-
-      catch (err) {
+      }catch(err){
 
         console.log(
-          "Autoplay bloqueado:",
+          "Autoplay restringido:",
           err
         );
 
-        loading.style.display = "none";
+        /*
+          Segundo intento obligatorio
+          en silencio para móviles.
+        */
 
-        playButton.style.display = "block";
+        try{
+
+          video.muted = true;
+
+          await video.play();
+
+        }catch(error2){
+
+          console.log(
+            "Segundo intento falló:",
+            error2
+          );
+
+        }
 
       }
 
     }
-
-
-    playButton.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          await video.play();
-
-          playButton.style.display =
-            "none";
-
-        }
-
-        catch (err) {
-
-          error.style.display =
-            "block";
-
-        }
-
-      }
-    );
-
-
-    changeButton.addEventListener(
-      "click",
-      () => {
-
-        loadVideo();
-
-      }
-    );
 
 
     video.addEventListener(
       "playing",
       () => {
 
-        loading.style.display =
-          "none";
+        setTimeout(
+          () => {
 
-        playButton.style.display =
-          "none";
+            loading.classList.add("hide");
 
-      }
-    );
-
-
-    video.addEventListener(
-      "waiting",
-      () => {
-
-        loading.style.display =
-          "block";
+          },
+          250
+        );
 
       }
     );
@@ -332,8 +444,17 @@
       "canplay",
       () => {
 
-        loading.style.display =
-          "none";
+        loading.classList.add("hide");
+
+      }
+    );
+
+
+    video.addEventListener(
+      "waiting",
+      () => {
+
+        loading.classList.remove("hide");
 
       }
     );
@@ -343,17 +464,12 @@
       "error",
       () => {
 
-        loading.style.display =
-          "none";
+        loading.classList.add("hide");
 
-        playButton.style.display =
-          "none";
+        error.style.display = "flex";
 
-        error.style.display =
-          "block";
-
-        console.error(
-          "Error de video:",
+        console.log(
+          "Error video:",
           video.error
         );
 
@@ -361,7 +477,51 @@
     );
 
 
-    loadVideo();
+    changeButton.addEventListener(
+      "click",
+      async () => {
+
+        userInteracted = true;
+
+        await playSelectedVideo();
+
+        video.muted = false;
+
+      }
+    );
+
+
+    /*
+      Primera carga automática
+    */
+
+    playSelectedVideo();
+
+
+    /*
+      Si la persona toca cualquier parte
+      de la pantalla, activamos el audio
+      inmediatamente.
+    */
+
+    document.addEventListener(
+      "pointerdown",
+      () => {
+
+        if(!userInteracted){
+
+          userInteracted = true;
+
+          video.muted = false;
+
+        }
+
+      },
+      {
+        once: true
+      }
+    );
+
 
   </script>
 
