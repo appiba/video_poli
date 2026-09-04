@@ -2,7 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
   <title>Sorpréndeme</title>
 
   <style>
@@ -10,33 +15,355 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
       min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
       background: #000;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: Arial, sans-serif;
     }
 
     video {
       width: 100%;
-      max-width: 500px;
-      max-height: 100vh;
+      height: 100%;
       object-fit: contain;
+      background: #000;
+    }
+
+    .controls {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 25px;
+
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 15px 22px;
+
+      font-size: 14px;
+      font-weight: 800;
+
+      cursor: pointer;
+
+      background: #ffd400;
+      color: #111;
+
+      box-shadow: 0 6px 20px rgba(0,0,0,.35);
+    }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    #playButton {
+      position: absolute;
+
+      top: 50%;
+      left: 50%;
+
+      transform: translate(-50%, -50%);
+
+      padding: 18px 28px;
+
+      font-size: 16px;
+
+      z-index: 20;
+
+      display: none;
+    }
+
+    .loading {
+      position: absolute;
+
+      top: 50%;
+      left: 50%;
+
+      transform: translate(-50%, -50%);
+
+      color: white;
+
+      font-size: 15px;
+
+      z-index: 5;
+    }
+
+    .error {
+      position: absolute;
+
+      left: 20px;
+      right: 20px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      color: white;
+      text-align: center;
+
+      display: none;
+
+      z-index: 30;
     }
   </style>
 </head>
 
 <body>
 
-  <video
-    src="IMG_6293.MP4"
-    controls
-    autoplay
-    playsinline>
-  </video>
+  <div class="app">
+
+    <div id="loading" class="loading">
+      Cargando video...
+    </div>
+
+    <video
+      id="video"
+      controls
+      playsinline
+      webkit-playsinline
+      preload="auto"
+    ></video>
+
+    <button id="playButton">
+      ▶ VER VIDEO
+    </button>
+
+    <div class="controls">
+      <button id="changeButton">
+        SORPRÉNDEME OTRA VEZ
+      </button>
+    </div>
+
+    <div id="error" class="error">
+      No se pudo reproducir el video.
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const videos = [
+
+      "IMG_6293.MP4"
+
+      /*
+      Cuando tengas los otros videos:
+
+      "video2.mp4",
+      "video3.mp4"
+
+      */
+
+    ];
+
+
+    const video =
+      document.getElementById("video");
+
+    const changeButton =
+      document.getElementById("changeButton");
+
+    const playButton =
+      document.getElementById("playButton");
+
+    const loading =
+      document.getElementById("loading");
+
+    const error =
+      document.getElementById("error");
+
+
+    let currentIndex = -1;
+
+
+    function randomVideo() {
+
+      if (videos.length === 1) {
+        return 0;
+      }
+
+      let newIndex;
+
+      do {
+
+        newIndex =
+          Math.floor(
+            Math.random() * videos.length
+          );
+
+      } while (newIndex === currentIndex);
+
+      return newIndex;
+    }
+
+
+    async function loadVideo() {
+
+      loading.style.display = "block";
+      error.style.display = "none";
+      playButton.style.display = "none";
+
+      currentIndex = randomVideo();
+
+      const selectedVideo =
+        videos[currentIndex];
+
+      video.pause();
+
+      video.src =
+        "./" + selectedVideo;
+
+      video.load();
+
+
+      try {
+
+        await video.play();
+
+        loading.style.display = "none";
+
+      }
+
+      catch (err) {
+
+        console.log(
+          "Autoplay bloqueado:",
+          err
+        );
+
+        loading.style.display = "none";
+
+        playButton.style.display = "block";
+
+      }
+
+    }
+
+
+    playButton.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await video.play();
+
+          playButton.style.display =
+            "none";
+
+        }
+
+        catch (err) {
+
+          error.style.display =
+            "block";
+
+        }
+
+      }
+    );
+
+
+    changeButton.addEventListener(
+      "click",
+      () => {
+
+        loadVideo();
+
+      }
+    );
+
+
+    video.addEventListener(
+      "playing",
+      () => {
+
+        loading.style.display =
+          "none";
+
+        playButton.style.display =
+          "none";
+
+      }
+    );
+
+
+    video.addEventListener(
+      "waiting",
+      () => {
+
+        loading.style.display =
+          "block";
+
+      }
+    );
+
+
+    video.addEventListener(
+      "canplay",
+      () => {
+
+        loading.style.display =
+          "none";
+
+      }
+    );
+
+
+    video.addEventListener(
+      "error",
+      () => {
+
+        loading.style.display =
+          "none";
+
+        playButton.style.display =
+          "none";
+
+        error.style.display =
+          "block";
+
+        console.error(
+          "Error de video:",
+          video.error
+        );
+
+      }
+    );
+
+
+    loadVideo();
+
+  </script>
 
 </body>
 </html>
